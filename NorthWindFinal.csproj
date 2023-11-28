@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
   </PropertyGroup>
+
    <ItemGroup>
      <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -16,4 +17,5 @@
     </PackageReference>
     <PackageReference Include="NLog" Version="5.1.1" />
   </ItemGroup>
+  
 </Project>
