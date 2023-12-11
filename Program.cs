@@ -94,6 +94,8 @@ try
             List<ValidationResult> results = new List<ValidationResult>();
             Console.WriteLine("What is the name of the product:");
             product.ProductName = Console.ReadLine();
+            Console.WriteLine("What Supplier ID should the Product be assigned to:");
+            product.SupplierId = int.Parse(Console.ReadLine());
             Console.WriteLine("What category ID should the Product be included in:");
             product.CategoryId = int.Parse(Console.ReadLine());
             Console.WriteLine("Enter the quantity per unit of product:");
@@ -106,8 +108,23 @@ try
             product.UnitsOnOrder =  short.Parse(Console.ReadLine());
             Console.WriteLine("What is the reorder quantity:");
             product.ReorderLevel = short.Parse(Console.ReadLine());
-            Console.WriteLine("Is product discontinued:");
-            product.Discontinued = bool.Parse(Console.ReadLine());
+            Console.WriteLine("Is product discontinued yes or no:");
+            
+            // allow use of yes or no for boolean discountinued value
+            string discontinuedYesorNo;
+            while (true)
+            {
+                discontinuedYesorNo = Console.ReadLine().ToLower();
+                if (discontinuedYesorNo == "yes" || discontinuedYesorNo== "no")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("enter 'yes' or 'no'.");
+                }
+            }
+            product.Discontinued = discontinuedYesorNo == "yes";
            
             var isValid = Validator.TryValidateObject(product, context, results, true);
             if (isValid)
@@ -151,6 +168,16 @@ try
                 editProduct.ProductName = Console.ReadLine();
 
                 Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Supplier ID:");
+                Console.ForegroundColor = ConsoleColor.White;
+                editProduct.SupplierId = int.Parse(Console.ReadLine());
+
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Category ID:");
+                Console.ForegroundColor = ConsoleColor.White;
+                editProduct.CategoryId= int.Parse(Console.ReadLine());
+
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("Update the quantity per unit of product:");
                 Console.ForegroundColor = ConsoleColor.White;
                 editProduct.QuantityPerUnit = Console.ReadLine();
@@ -178,7 +205,21 @@ try
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("Is the product discountinued?:");
                 Console.ForegroundColor = ConsoleColor.White;
-                editProduct.Discontinued = bool.Parse(Console.ReadLine());
+                // allow use of yes or no for boolean discountinued value
+                string discontinuedYesorNo;
+                while (true)
+                {
+                    discontinuedYesorNo = Console.ReadLine().ToLower();
+                    if (discontinuedYesorNo == "yes" || discontinuedYesorNo== "no")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("enter 'yes' or 'no'.");
+                    }
+                }
+                editProduct.Discontinued = discontinuedYesorNo == "yes";
 
                 // Save changes to the database
                 db.SaveChanges();
