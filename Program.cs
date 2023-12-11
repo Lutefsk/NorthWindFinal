@@ -17,26 +17,28 @@ try
     string choice;
     do
     {
-        Console.WriteLine("1) Display all Products"); // done
-        Console.WriteLine("2) Display a specific Product "); //done
-        Console.WriteLine("3) Add a new Product");//done
-        Console.WriteLine("4) Edit a Product");//done
-        Console.WriteLine("5) Display all Categories"); //done
-        Console.WriteLine("6) Display all Categories with Products");//done
-        Console.WriteLine("7) Add a new Category");//done
-        Console.WriteLine("8) Edit a Category");
-        Console.WriteLine("9) Display specific Category with Products");
+        Console.WriteLine("1) Display active Products"); // done
+        Console.WriteLine("2) Display inactive Products"); // done
+        Console.WriteLine("3) Display a specific Product "); //done
+        Console.WriteLine("4) Add a new Product");//done
+        Console.WriteLine("5) Edit a Product");//done
+        Console.WriteLine("6) Display all Categories"); //done
+        Console.WriteLine("7) Display all Categories with Products");//done
+        Console.WriteLine("8) Add a new Category");//done
+        Console.WriteLine("9) Edit a Category");
+        Console.WriteLine("10) Display specific Category with Products");
         Console.WriteLine("\"q\" to quit");
 
         choice = Console.ReadLine();
         Console.Clear();
         logger.Info($"Option {choice} selected");
 
-        if (choice == "1") //display all prodcuts in products table
+        if (choice == "1") //display active prodcuts in products table
         {
-            var query = db.Products.OrderBy(p => p.ProductName);
+            bool discontinued = false;
+            var query = db.Products.Where(p => p.Discontinued == discontinued).OrderBy(p => p.ProductName);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"{query.Count()} records returned");
+            Console.WriteLine($"{query.Count()} {discontinued} records returned");
             Console.ForegroundColor = ConsoleColor.Magenta;
             foreach (var item in query)
             {
@@ -44,7 +46,20 @@ try
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
-        else if (choice == "2") //display specific prodcuts in products table
+        else if (choice == "2") //display inactive prodcuts in products table
+        {
+            bool discontinued = true;
+            var query = db.Products.Where(p => p.Discontinued == discontinued).OrderBy(p => p.ProductName);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{query.Count()} {discontinued} records returned");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            foreach (var item in query)
+            {
+                Console.WriteLine($"{item.ProductName}");
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        else if (choice == "3") //display specific prodcuts in products table
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Enter the product ID:");
@@ -72,7 +87,7 @@ try
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
-        else if (choice == "3") //add a new product
+        else if (choice == "4") //add a new product
         {
             Product product = new Product();
             ValidationContext context = new ValidationContext(product, null, null);
@@ -121,7 +136,7 @@ try
             }
         }
         
-        else if (choice == "4") //edit a Product
+        else if (choice == "5") //edit a Product
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Enter the product id to edit:");
@@ -181,7 +196,7 @@ try
                 Console.ForegroundColor = ConsoleColor.White;
         }
 
-        else if (choice == "5") //display all categories
+        else if (choice == "6") //display all categories
         {
             var query = db.Categories.OrderBy(p => p.CategoryName);
 
@@ -194,7 +209,7 @@ try
             }
             Console.ForegroundColor = ConsoleColor.White;
         }
-        else if (choice == "6") //display all products with categories
+        else if (choice == "7") //display all products with categories
         {
             var query = db.Categories.Include("Products").OrderBy(p => p.CategoryId);
             foreach (var item in query)
@@ -209,7 +224,7 @@ try
                 }
             }
         }
-        else if (choice == "7") //add a new category
+        else if (choice == "8") //add a new category
         {
             Category category = new Category();
             Console.WriteLine("Enter Category Name:");
@@ -245,7 +260,7 @@ try
                 }
             }
         }
-        else if (choice == "8") //edit a category
+        else if (choice == "9") //edit a category
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Category to edit :");
@@ -255,7 +270,7 @@ try
             string editcategory = Console.ReadLine();
             
         }
-        else if (choice == "9") //Display specific category with it's products
+        else if (choice == "10") //Display specific category with it's products
         {
             Console.ForegroundColor = ConsoleColor.Gray;
             {
