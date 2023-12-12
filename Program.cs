@@ -17,14 +17,14 @@ try
     string choice;
     do
     {
-        Console.WriteLine("1) Display active Products"); // done
-        Console.WriteLine("2) Display inactive Products"); // done
-        Console.WriteLine("3) Display a specific Product "); //done
-        Console.WriteLine("4) Add a new Product");//done
-        Console.WriteLine("5) Edit a Product");//done
-        Console.WriteLine("6) Display all Categories"); //done
-        Console.WriteLine("7) Display all Categories with Products");//done
-        Console.WriteLine("8) Add a new Category");//done
+        Console.WriteLine("1) Display active Products"); 
+        Console.WriteLine("2) Display inactive Products"); 
+        Console.WriteLine("3) Display a specific Product "); 
+        Console.WriteLine("4) Add a new Product");
+        Console.WriteLine("5) Edit a Product");
+        Console.WriteLine("6) Display all Categories"); 
+        Console.WriteLine("7) Display all Categories with Products");
+        Console.WriteLine("8) Add a new Category");
         Console.WriteLine("9) Edit a Category");
         Console.WriteLine("10) Display specific Category with Products");
         Console.WriteLine("\"q\" to quit");
@@ -103,19 +103,19 @@ try
             Console.WriteLine("Enter the product price in US $:");
             product.UnitPrice = short.Parse(Console.ReadLine());
             Console.WriteLine("How many units of the product in stock:");
-            product.UnitsInStock =  short.Parse(Console.ReadLine());
+            product.UnitsInStock = short.Parse(Console.ReadLine());
             Console.WriteLine("How many units of the product are on order:");
-            product.UnitsOnOrder =  short.Parse(Console.ReadLine());
+            product.UnitsOnOrder = short.Parse(Console.ReadLine());
             Console.WriteLine("What is the reorder quantity:");
             product.ReorderLevel = short.Parse(Console.ReadLine());
             Console.WriteLine("Is product discontinued yes or no:");
-            
+
             // allow use of yes or no for boolean discountinued value
             string discontinuedYesorNo;
             while (true)
             {
                 discontinuedYesorNo = Console.ReadLine().ToLower();
-                if (discontinuedYesorNo == "yes" || discontinuedYesorNo== "no")
+                if (discontinuedYesorNo == "yes" || discontinuedYesorNo == "no")
                 {
                     break;
                 }
@@ -125,7 +125,7 @@ try
                 }
             }
             product.Discontinued = discontinuedYesorNo == "yes";
-           
+
             var isValid = Validator.TryValidateObject(product, context, results, true);
             if (isValid)
             {
@@ -152,7 +152,7 @@ try
                 }
             }
         }
-        
+
         else if (choice == "5") //edit a Product
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
@@ -175,7 +175,7 @@ try
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("Category ID:");
                 Console.ForegroundColor = ConsoleColor.White;
-                editProduct.CategoryId= int.Parse(Console.ReadLine());
+                editProduct.CategoryId = int.Parse(Console.ReadLine());
 
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("Update the quantity per unit of product:");
@@ -210,7 +210,7 @@ try
                 while (true)
                 {
                     discontinuedYesorNo = Console.ReadLine().ToLower();
-                    if (discontinuedYesorNo == "yes" || discontinuedYesorNo== "no")
+                    if (discontinuedYesorNo == "yes" || discontinuedYesorNo == "no")
                     {
                         break;
                     }
@@ -231,10 +231,10 @@ try
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Product {editProductid} not found.");
-                logger.Warn($"Product ID: {editProductid} is not int the database.");
+                logger.Warn($"Product ID: {editProductid} is not in the database.");
             }
 
-                Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         else if (choice == "6") //display all categories
@@ -306,38 +306,59 @@ try
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Category to edit :");
             Console.ForegroundColor = ConsoleColor.White;
-            string CategoryName = Console.ReadLine();
-            Console.WriteLine("Edit Category Description:");
-            string editcategory = Console.ReadLine();
-            
+            string categoryName = Console.ReadLine();
+            Category editCategory = db.Categories.FirstOrDefault(c => c.CategoryName == categoryName);
+            if (editCategory != null)
+            {
+                Console.WriteLine("Edit Category Description:");
+                string newDescription = Console.ReadLine();
+
+                // Update category description
+                editCategory.Description = newDescription;
+
+                // Save changes to the database
+                db.SaveChanges();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"{categoryName} was updated");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"{categoryName} not found.");
+                logger.Warn($"Category {categoryName} is not in the database.");
+            }
+
+            Console.ForegroundColor = ConsoleColor.White;
         }
+
         else if (choice == "10") //Display specific category with it's products
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            {
-                var query = db.Categories.OrderBy(p => p.CategoryId);
+             Console.ForegroundColor = ConsoleColor.Gray;
+        {
+            var query = db.Categories.OrderBy(p => p.CategoryId);
 
-                Console.WriteLine("Select the category whose products you want to display:");
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                foreach (var item in query)
-                {
-                    Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
-                }
-                Console.ForegroundColor = ConsoleColor.White;
-                int id = int.Parse(Console.ReadLine());
-                Console.Clear();
-                logger.Info($"CategoryId {id} selected");
-                Category category = db.Categories.Include("Products").FirstOrDefault(c => c.CategoryId == id);
-                Console.WriteLine($"{category.CategoryName} - {category.Description}");
-                foreach (Product p in category.Products)
-                {
-                    Console.WriteLine($"\t{p.ProductName}");
-                }
+            Console.WriteLine("Select the category whose products you want to display:");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            foreach (var item in query)
+            {
+                Console.WriteLine($"{item.CategoryId}) {item.CategoryName}");
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            int id = int.Parse(Console.ReadLine());
+            Console.Clear();
+            logger.Info($"CategoryId {id} selected");
+            Category category = db.Categories.Include("Products").FirstOrDefault(c => c.CategoryId == id);
+            Console.WriteLine($"{category.CategoryName} - {category.Description}");
+            foreach (Product p in category.Products)
+            {
+                Console.WriteLine($"\t{p.ProductName}");
             }
         }
-        Console.WriteLine();
+    }
+    Console.WriteLine();
 
-    } while (choice.ToLower() != "q");
+} while (choice.ToLower() != "q") ;
 }
 catch (Exception ex)
 {
